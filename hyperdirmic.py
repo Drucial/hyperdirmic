@@ -45,7 +45,7 @@ if __name__ == "__main__":
         os.path.expanduser("~/Desktop"),
         os.path.expanduser("~/Downloads"),
     ]
-    event_handler = MyHandler()
+    event_handler = Handler()
     observer = Observer()
     for path in paths_to_watch:
         observer.schedule(event_handler, path, recursive=False)
