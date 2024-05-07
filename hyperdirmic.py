@@ -1,10 +1,12 @@
 import os
-import time
 import shutil
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
+import time
 
-class MyHandler(FileSystemEventHandler):
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers import Observer
+
+
+class Handler(FileSystemEventHandler):
     def on_created(self, event):
         if event.is_directory:
             return
@@ -23,20 +25,26 @@ class MyHandler(FileSystemEventHandler):
         destination_dir = self.get_destination_dir(file_type)
         if not os.path.exists(destination_dir):
             os.makedirs(destination_dir)
-        shutil.move(file_path, os.path.join(destination_dir, os.path.basename(file_path)))
+        shutil.move(
+            file_path, os.path.join(destination_dir, os.path.basename(file_path))
+        )
 
     def get_destination_dir(self, file_type):
         # Define your directory mapping here based on file types
         mapping = {
-            'txt': 'TextFiles',
-            'jpg': 'Images',
-            'png': 'Images',
+            "txt": "TextFiles",
+            "jpg": "Images",
+            "png": "Images",
             # Add more file types and directories as needed
         }
-        return mapping.get(file_type, 'OtherFiles')
+        return mapping.get(file_type, "OtherFiles")
+
 
 if __name__ == "__main__":
-    paths_to_watch = [os.path.expanduser("~/Desktop"), os.path.expanduser("~/Downloads")]
+    paths_to_watch = [
+        os.path.expanduser("~/Desktop"),
+        os.path.expanduser("~/Downloads"),
+    ]
     event_handler = MyHandler()
     observer = Observer()
     for path in paths_to_watch:
@@ -49,4 +57,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
-
