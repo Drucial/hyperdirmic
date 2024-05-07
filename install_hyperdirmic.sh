@@ -3,7 +3,7 @@
 # Create a virtual environment and install required Python modules
 python3 -m venv venv
 source venv/bin/activate
-pipip install --user watchdog
+pip install  watchdog
 
 # Add aliases for Hyperdirmic setup to .zshrc
 echo "alias organize=\"$(pwd)/hyperdirmic_setup.py\"" >> ~/.zshrc
