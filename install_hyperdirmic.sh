@@ -33,7 +33,10 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
-    <true/>
+    <dict>
+      <key>SuccessfulExit</key>
+      <false/>
+    </dict>
     <key>StandardErrorPath</key>
     <string>/tmp/com.drucial.hyperdirmic.err</string>
     <key>StandardOutPath</key>
