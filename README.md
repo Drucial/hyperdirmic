@@ -66,4 +66,20 @@ If you encounter any issues, please check the logs using the `loghyperdirmic` an
 ## Conclusion
 The Hyperdirmic script automates file organization tasks, making it easier to keep your desktop and downloads directory well-organized without manual intervention.
 
-For more details on custom configurations and advanced options, refer to the `Advanced_Configuration.md` in the repository.
+## Roadmap
+- Add support for more file types and extensions.
+- Implement a configuration file to customize the script's behavior.
+- Add support for multiple directories and custom folder structures.
+- Implement a GUI for easier configuration and monitoring.
+
+## TODO
+- [ ] Better Folder Icons
+- [ ] Add more tests to ensure the script's reliability and stability.
+- [ ] Implement a more robust error handling mechanism.
+- [ ] Add support for logging and monitoring the script's activity.
+- [ ] Add support for more file types and extensions.
+- [ ] Implement a configuration file to customize the script's behavior.
+- [ ] Add support for multiple directories and custom folder structures.
+- [ ] Implement a GUI for easier configuration and monitoring.
+
+<!-- For more details on custom configurations and advanced options, refer to the `Advanced_Configuration.md` in the repository. -->

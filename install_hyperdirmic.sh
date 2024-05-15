@@ -1,6 +1,5 @@
 #!/bin/zsh
 
-# Debug information
 echo "Starting installation script..."
 
 # Kill any existing hyperdirmic processes
@@ -18,7 +17,6 @@ source venv/bin/activate
 pip install --upgrade pip
 pip install watchdog
 
-# Debug information
 echo "Virtual environment and dependencies installed."
 
 # Determine the location of .zshrc or .zprofile
@@ -50,7 +48,6 @@ if [ -f "$ZSHRC" ]; then
     source "$ZSHRC"
 fi
 
-# Debug information
 echo "Utility commands added to $ZSHRC and sourced."
 
 # Install and configure launch agent
@@ -62,9 +59,7 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>com.drucial.hyperdirmic</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/bin/zsh</string>
-        <string>-c</string>
-        <string>cd $(pwd) && source ./venv/bin/activate && PYTHONPATH=$(pwd) ./venv/bin/python3 -m hyperdirmic.hyperdirmic</string>
+        <string>/Users/drucial/Scripts/hyperdirmic/hyperdirmic/run_hyperdirmic.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -81,7 +76,6 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </plist>"
 echo "$plist_data" > ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 
-# Debug information
 echo "Launch agent plist created."
 
 # Load launch agent and check for errors
@@ -90,11 +84,9 @@ if ! launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
     exit 1
 fi
 
-# Debug information
 echo "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
-cd "$(pwd)" && PYTHONPATH=$(pwd) ./venv/bin/python3 -m hyperdirmic.hyperdirmic &
+cd "$(pwd)" && ./hyperdirmic/run_hyperdirmic.sh &
 
-# Notify user about setup completion
 echo "Setup complete! Hyperdirmic will now run at login and automatically organize desktop and downloads files."

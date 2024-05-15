@@ -1,22 +1,28 @@
 #!/bin/zsh
 
+echo "Starting uninstallation script..."
+
 # Kill any existing hyperdirmic processes
 pkill -f hyperdirmic.py
 
-# Unload and remove the launch agent
+# Check if plist file exists and unload it if it does
 if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
     launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
     rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
-    echo "Unloaded and removed launch agent."
+    echo "Launch agent unloaded and plist file removed."
+else
+    echo "No plist file found to unload."
 fi
 
-# Remove the virtual environment
+# Remove virtual environment
 if [ -d venv ]; then
     rm -rf venv
-    echo "Removed virtual environment."
+    echo "Virtual environment removed."
+else
+    echo "No virtual environment found to remove."
 fi
 
-# Determine the location of .zshrc
+# Remove utility commands from .zshrc or .zprofile
 if [ -f ~/.zshrc ]; then
     ZSHRC=~/.zshrc
 elif [ -f ~/.config/zsh/.zshrc ]; then
@@ -28,14 +34,21 @@ else
     read -r ZSHRC
 fi
 
-# Remove utility commands from .zshrc
+# Remove utility commands if present
 if [ -f "$ZSHRC" ]; then
     sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
-    echo "Removed Hyperdirmic utility commands from $ZSHRC."
+    echo "Utility commands removed from $ZSHRC."
 fi
 
-# Reload the .zshrc file to apply changes
-source "$ZSHRC"
+# Clear the logs
+rm -f /tmp/hyperdirmic.log
+rm -f /tmp/com.drucial.hyperdirmic.err
+rm -f /tmp/com.drucial.hyperdirmic.out
+rm -f /tmp/com.drucial.hyperdirmic.debug.log
+echo "Logs cleared."
 
-# Notify user about uninstall completion
-echo "Uninstall complete! Hyperdirmic has been removed from your system."
+# Remove __pycache__ directories
+find . -name "__pycache__" -type d -exec rm -r {} +
+echo "__pycache__ directories removed."
+
+echo "Uninstallation complete! Hyperdirmic has been removed."

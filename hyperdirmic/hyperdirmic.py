@@ -3,22 +3,20 @@ import os
 import shutil
 import sys
 import time
-import signal
-
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from hyperdirmic.file_mappings import file_mappings  # Absolute import
+from .file_mappings import file_mappings  # Ensure correct import path
 
-# Setup logging
+# Setup logging with timestamps and detailed formatting
 logging.basicConfig(
-    filename="/tmp/hyperdirmic.log",
+    filename='/tmp/hyperdirmic.log',
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
 )
 
 # PID file setup
-pid_file = "/tmp/hyperdirmic.pid"
-
+pid_file = '/tmp/hyperdirmic.pid'
 
 def check_pid(pid):
     """Check for the existence of a unix pid."""
@@ -29,15 +27,8 @@ def check_pid(pid):
     else:
         return True
 
-
-def cleanup():
-    if os.path.exists(pid_file):
-        os.remove(pid_file)
-    logging.info("Cleanup complete.")
-
-
 if os.path.isfile(pid_file):
-    with open(pid_file, "r") as file:
+    with open(pid_file, 'r') as file:
         old_pid = file.read()
     if check_pid(int(old_pid)):
         logging.error("Script is already running.")
@@ -45,15 +36,14 @@ if os.path.isfile(pid_file):
     else:
         os.remove(pid_file)
 
-with open(pid_file, "w") as file:
+with open(pid_file, 'w') as file:
     file.write(str(os.getpid()))
-
 
 class Handler(FileSystemEventHandler):
     def __init__(self):
         super().__init__()
         logging.info("Handler initialized.")
-        self.mapping = file_mappings
+        self.file_mappings = file_mappings
 
     def on_created(self, event):
         if event.is_directory:
@@ -70,9 +60,11 @@ class Handler(FileSystemEventHandler):
 
     def organize_file(self, file_path, file_type):
         destination_dir = self.get_destination_dir(file_type)
-        filename = os.path.basename(file_path).lstrip(".")
+        filename = os.path.basename(file_path).lstrip('.')
         src = os.path.join(os.path.dirname(file_path), filename)
 
+        logging.info(f"Attempting to move file: {src}")
+        
         while not os.path.exists(src):
             time.sleep(0.1)
         time.sleep(1)
@@ -81,42 +73,22 @@ class Handler(FileSystemEventHandler):
             if not os.path.exists(destination_dir):
                 os.makedirs(destination_dir)
                 logging.info(f"Created directory {destination_dir}")
-
-            dest = os.path.join(destination_dir, filename)
-            dest = self.resolve_filename_conflict(dest)
-
-            shutil.move(src, dest)
-            logging.info(f"Moved {src} to {dest}")
+            new_filename = filename
+            counter = 1
+            while os.path.exists(os.path.join(destination_dir, new_filename)):
+                name, ext = os.path.splitext(filename)
+                new_filename = f"{name}_{counter}{ext}"
+                counter += 1
+            shutil.move(src, os.path.join(destination_dir, new_filename))
+            logging.info(f"Moved {src} to {destination_dir}/{new_filename}")
         else:
             logging.warning(f"File {src} does not exist.")
 
-    def resolve_filename_conflict(self, dest):
-        if not os.path.exists(dest):
-            return dest
-        base, extension = os.path.splitext(dest)
-        counter = 1
-        new_dest = f"{base}_{counter}{extension}"
-        while os.path.exists(new_dest):
-            counter += 1
-            new_dest = f"{base}_{counter}{extension}"
-        return new_dest
-
     def get_destination_dir(self, file_type):
         downloads_dir = os.path.expanduser("~/Downloads")
-        return os.path.join(downloads_dir, self.mapping.get(file_type, "OtherFiles"))
-
+        return os.path.join(downloads_dir, self.file_mappings.get(file_type, "OtherFiles"))
 
 if __name__ == "__main__":
-    def signal_handler(sig, frame):
-        logging.info("Received signal to terminate, cleaning up...")
-        observer.stop()
-        observer.join()
-        cleanup()
-        sys.exit(0)
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-
     logging.info("Starting observer...")
     paths_to_watch = [
         os.path.expanduser("~/Desktop"),
@@ -136,4 +108,8 @@ if __name__ == "__main__":
         observer.stop()
     observer.join()
     logging.info("Observer stopped.")
-    cleanup()
+
+# Ensure PID file is removed when script exits
+if os.path.exists(pid_file):
+    os.remove(pid_file)
+    logging.info("PID file removed.")

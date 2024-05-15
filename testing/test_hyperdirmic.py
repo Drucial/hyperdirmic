@@ -1,11 +1,12 @@
+import logging
 import os
 import shutil
 import tempfile
 import time
-import logging
 
 from watchdog.observers import Observer
-from hyperdirmic.hyperdirmic import Handler  # Import your Handler class from the package
+
+from hyperdirmic.hyperdirmic import Handler  # Ensure correct import path
 
 # Set up logging to file and console
 logging.basicConfig(
@@ -19,6 +20,7 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 console_handler.setFormatter(formatter)
 logging.getLogger().addHandler(console_handler)
 
+
 def create_test_files(base_dir):
     test_files = {
         "image.jpg": "Images",
@@ -31,12 +33,13 @@ def create_test_files(base_dir):
 
     for file_name, expected_dir in test_files.items():
         file_path = os.path.join(base_dir, file_name)
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             f.write("This is a test file.")
         logging.info(f"Created test file: {file_path}")
         time.sleep(0.1)  # Ensure the file creation event is detected
 
     return test_files
+
 
 def test_file_organizer():
     temp_dir = tempfile.mkdtemp()
@@ -68,6 +71,7 @@ def test_file_organizer():
         observer.join()
         shutil.rmtree(temp_dir)  # Clean up temporary directory
         logging.info(f"Cleaned up temporary directory: {temp_dir}")
+
 
 if __name__ == "__main__":
     test_file_organizer()
