@@ -2,3 +2,4 @@ venv
 .DS_Store
 .git/
 .gitignore
+--pycache--/

@@ -3,9 +3,11 @@ import os
 import shutil
 import sys
 import time
+import signal
 
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+from hyperdirmic.file_mappings import file_mappings  # Absolute import
 
 # Setup logging
 logging.basicConfig(
@@ -28,6 +30,12 @@ def check_pid(pid):
         return True
 
 
+def cleanup():
+    if os.path.exists(pid_file):
+        os.remove(pid_file)
+    logging.info("Cleanup complete.")
+
+
 if os.path.isfile(pid_file):
     with open(pid_file, "r") as file:
         old_pid = file.read()
@@ -45,12 +53,7 @@ class Handler(FileSystemEventHandler):
     def __init__(self):
         super().__init__()
         logging.info("Handler initialized.")
-        self.mapping = {
-            "txt": "TextFiles",
-            "jpg": "Images",
-            "png": "Images",
-            # Add more file types and directories as needed
-        }
+        self.mapping = file_mappings
 
     def on_created(self, event):
         if event.is_directory:
@@ -78,10 +81,25 @@ class Handler(FileSystemEventHandler):
             if not os.path.exists(destination_dir):
                 os.makedirs(destination_dir)
                 logging.info(f"Created directory {destination_dir}")
-            shutil.move(src, os.path.join(destination_dir, filename))
-            logging.info(f"Moved {src} to {destination_dir}")
+
+            dest = os.path.join(destination_dir, filename)
+            dest = self.resolve_filename_conflict(dest)
+
+            shutil.move(src, dest)
+            logging.info(f"Moved {src} to {dest}")
         else:
             logging.warning(f"File {src} does not exist.")
+
+    def resolve_filename_conflict(self, dest):
+        if not os.path.exists(dest):
+            return dest
+        base, extension = os.path.splitext(dest)
+        counter = 1
+        new_dest = f"{base}_{counter}{extension}"
+        while os.path.exists(new_dest):
+            counter += 1
+            new_dest = f"{base}_{counter}{extension}"
+        return new_dest
 
     def get_destination_dir(self, file_type):
         downloads_dir = os.path.expanduser("~/Downloads")
@@ -89,6 +107,16 @@ class Handler(FileSystemEventHandler):
 
 
 if __name__ == "__main__":
+    def signal_handler(sig, frame):
+        logging.info("Received signal to terminate, cleaning up...")
+        observer.stop()
+        observer.join()
+        cleanup()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
     logging.info("Starting observer...")
     paths_to_watch = [
         os.path.expanduser("~/Desktop"),
@@ -108,7 +136,4 @@ if __name__ == "__main__":
         observer.stop()
     observer.join()
     logging.info("Observer stopped.")
-
-# Ensure PID file is removed when script exits
-if os.path.exists(pid_file):
-    os.remove(pid_file)
+    cleanup()

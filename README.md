@@ -14,31 +14,54 @@ The script utilizes the Python Watchdog library to monitor changes in specified 
 - pip
 - git (for cloning the repository)
 
-### Cloning the Repository
-To get started with the Hyperdirmic script, clone the repository to your local machine:
+## Installation
 
+To install Hyperdirmic, follow these steps:
+
+1. **Clone the Repository**:
 ```bash
-git clone https://github.com/drucial/hyperdirmic.git
-cd hyperdirmic
+git clone <repository-url>
+cd <repository-directory>
 ```
 
-### Installation
-Run the installation script to set up the necessary environment and dependencies:
-
+2. **Run the Install Script**:
 ```bash
 ./install_hyperdirmic.sh
 ```
 
-This script sets up a Python virtual environment, installs necessary dependencies, and configures the script to run at system startup.
+This will set up the virtual environment, install necessary dependencies, configure the launch agent, and add utility commands to your `.zshrc`.
 
-## Testing the Script
-To ensure the script functions as intended, follow the comprehensive testing instructions provided in the repository:
+## Uninstallation
 
-1. **Functional Tests**: Verify file organization and error handling.
-2. **Performance Monitoring**: Ensure the script does not consume excessive system resources.
-3. **Automated Restart Tests**: Confirm that the script restarts correctly after system reboots.
+To uninstall Hyperdirmic, follow these steps:
 
-Detailed testing steps can be found in the `Testing_Instructions.md` included in the repository.
+1. **Run the Uninstall Script**:
+```bash
+./uninstall_hyperdirmic.sh
+```
+
+This will stop any running Hyperdirmic processes, remove the launch agent, delete the virtual environment, and remove utility commands from your `.zshrc`.
+
+## Utility Commands
+
+After installation, you can use the following utility commands:
+
+- **To kill the running `hyperdirmic` process**:
+```bash
+killhyperdirmic
+```
+- **To view the standard output log**:
+```bash
+loghyperdirmic
+```
+- **To view the standard error log**:
+```bash
+errorhyperdirmic
+```
+
+## Troubleshooting
+
+If you encounter any issues, please check the logs using the `loghyperdirmic` and `errorhyperdirmic` commands.
 
 ## Conclusion
 The Hyperdirmic script automates file organization tasks, making it easier to keep your desktop and downloads directory well-organized without manual intervention.
