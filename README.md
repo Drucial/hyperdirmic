@@ -20,8 +20,8 @@ To install Hyperdirmic, follow these steps:
 
 1. **Clone the Repository**:
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/Drucial/hyperdirmic.git
+cd hyperdirmic
 ```
 
 2. **Run the Install Script**:
