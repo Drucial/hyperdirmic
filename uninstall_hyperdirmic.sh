@@ -39,4 +39,3 @@ source "$ZSHRC"
 
 # Notify user about uninstall completion
 echo "Uninstall complete! Hyperdirmic has been removed from your system."
-
