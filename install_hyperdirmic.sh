@@ -20,13 +20,21 @@ pip install watchdog
 echo "Virtual environment and dependencies installed."
 
 # Determine the location of .zshrc or .zprofile
-if [ -f ~/.zshrc ]; then
-    ZSHRC=~/.zshrc
-elif [ -f ~/.config/zsh/.zshrc ]; then
-    ZSHRC=~/.config/zsh/.zshrc
-elif [ -f ~/.zprofile ]; then
-    ZSHRC=~/.zprofile
-else
+ZSHRC=
+possible_locations=(
+    ~/.zshrc
+    ~/.config/zsh/.zshrc
+    ~/.zprofile
+)
+
+for location in "${possible_locations[@]}"; do
+    if [ -f "$location" ]; then
+        ZSHRC="$location"
+        break
+    fi
+done
+
+if [ -z "$ZSHRC" ]; then
     echo "No .zshrc or .zprofile found. Please specify the path to your zsh configuration file:"
     read -r ZSHRC
 fi
@@ -38,7 +46,7 @@ fi
 
 # Add utility commands for Hyperdirmic to .zshrc or .zprofile
 echo "\n# Hyperdirmic utility commands" >> "$ZSHRC"
-echo "alias organize='source $(pwd)/venv/bin/activate && PYTHONPATH=$(pwd) python -m hyperdirmic.hyperdirmic'" >> "$ZSHRC"
+echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m hyperdirmic.hyperdirmic'" >> "$ZSHRC"
 echo "alias killhyperdirmic='pkill -f hyperdirmic.py'" >> "$ZSHRC"
 echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'" >> "$ZSHRC"
 echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'" >> "$ZSHRC"
