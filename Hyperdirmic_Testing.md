@@ -108,27 +108,27 @@ Create directories within `~/Desktop` and `~/Downloads` to ensure they are ignor
 #### Instructions:
 
 1. **Create a new directory on the Desktop**:
-   ```bash
-   mkdir ~/Desktop/new_directory
-   ```
+```bash
+mkdir ~/Desktop/new_directory
+```
 
 2. **Create a new directory in Downloads**:
-   ```bash
-   mkdir ~/Downloads/new_directory
-   ```
+```bash
+mkdir ~/Downloads/new_directory
+```
 
 3. **Verify that these directories are not processed by the script**:
    - Look for any entries in the log file about these directories:
-     ```bash
-     cat /tmp/hyperdirmic.log | grep new_directory
-     ```
+ ```bash
+ cat /tmp/hyperdirmic.log | grep new_directory
+ ```
    - There should be no movement or processing logs for these directories if the script correctly ignores them.
 
 ### Step 3.3 Log Verification
 
 After performing file operations, verify that the log entries are recorded correctly in the script's log file.
 
-#### Instructions:
+### Instructions:
 
 1. **Open a terminal.**
 
