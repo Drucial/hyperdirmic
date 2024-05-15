@@ -1,5 +1,15 @@
-venv
+# Ignore the virtual environment directory
+venv/
+
+# Ignore macOS-specific metadata files
 .DS_Store
+
+# Ignore Git-related files and directories
 .git/
 .gitignore
---pycache--/
+
+# Ignore Python cache directories
+__pycache__/
+
+# Ignore test logs and temporary files
+/tmp/
