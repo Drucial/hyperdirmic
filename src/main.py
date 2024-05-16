@@ -5,8 +5,8 @@ import os
 import sys
 import time
 from watchdog.observers import Observer
-from src.watcher import Handler
-from src.utils.logger import setup_logging
+from watcher import Handler
+from utils.logger import setup_logging
 
 def main():
     setup_logging()

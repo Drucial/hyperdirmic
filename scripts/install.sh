@@ -111,7 +111,7 @@ cd "$(dirname "$0")" && ./run.sh &
 
 # Verify that Hyperdirmic is running
 sleep 5
-if pgrep -f hyperdirmic.main; then
+if pgrep -f src.main; then
     echo "Hyperdirmic is running."
 else
     echo "Failed to start Hyperdirmic."
