@@ -3,7 +3,7 @@
 echo "Starting uninstallation script..."
 
 # Kill any existing hyperdirmic processes
-pkill -f hyperdirmic.py
+pkill -f src.main
 
 # Check if plist file exists and unload it if it does
 if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
@@ -15,8 +15,8 @@ else
 fi
 
 # Remove virtual environment
-if [ -d venv ]; then
-    rm -rf venv
+if [ -d "$(dirname "$0")/../venv" ]; then
+    rm -rf "$(dirname "$0")/../venv"
     echo "Virtual environment removed."
 else
     echo "No virtual environment found to remove."

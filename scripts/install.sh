@@ -4,10 +4,10 @@ echo "Starting installation script..."
 
 # Kill any existing hyperdirmic processes
 echo "Terminating existing Hyperdirmic processes..."
-pkill -f hyperdirmic.hyperdirmic
+pkill -f hyperdirmic.main
 
 # Check if any hyperdirmic processes are still running
-if pgrep -f hyperdirmic.hyperdirmic; then
+if pgrep -f hyperdirmic.main; then
     echo "Failed to terminate Hyperdirmic application."
     exit 1
 else
@@ -59,8 +59,8 @@ fi
 # Add utility commands for Hyperdirmic to .zshrc or .zprofile
 echo "Adding Hyperdirmic utility commands to $ZSHRC..."
 echo "\n# Hyperdirmic utility commands" >> "$ZSHRC"
-echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m hyperdirmic.hyperdirmic'" >> "$ZSHRC"
-echo "alias killhyperdirmic='pkill -f hyperdirmic.hyperdirmic'" >> "$ZSHRC"
+echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m src.main'" >> "$ZSHRC"
+echo "alias killhyperdirmic='pkill -f hyperdirmic.main'" >> "$ZSHRC"
 echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'" >> "$ZSHRC"
 echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'" >> "$ZSHRC"
 
@@ -81,7 +81,7 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>com.drucial.hyperdirmic</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/drucial/Scripts/hyperdirmic/hyperdirmic/run_hyperdirmic.sh</string>
+        <string>$(dirname "$0")/scripts/run.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -107,11 +107,11 @@ fi
 echo "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
-cd "$(dirname "$0")" && ./hyperdirmic/run_hyperdirmic.sh &
+cd "$(dirname "$0")" && ./run.sh &
 
 # Verify that Hyperdirmic is running
 sleep 5
-if pgrep -f hyperdirmic.hyperdirmic; then
+if pgrep -f hyperdirmic.main; then
     echo "Hyperdirmic is running."
 else
     echo "Failed to start Hyperdirmic."
