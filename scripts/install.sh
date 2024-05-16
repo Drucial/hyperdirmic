@@ -3,15 +3,26 @@
 echo "Starting installation script..."
 
 # Kill any existing hyperdirmic processes
-pkill -f hyperdirmic.py
+echo "Terminating existing Hyperdirmic processes..."
+pkill -f hyperdirmic.hyperdirmic
+
+# Check if any hyperdirmic processes are still running
+if pgrep -f hyperdirmic.hyperdirmic; then
+    echo "Failed to terminate Hyperdirmic application."
+    exit 1
+else
+    echo "Successfully terminated Hyperdirmic processes."
+fi
 
 # Check if plist file exists and unload it if it does
 if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
+    echo "Unloading existing launch agent..."
     launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
     rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 fi
 
 # Create a virtual environment and install required Python modules
+echo "Creating virtual environment..."
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
@@ -41,13 +52,15 @@ fi
 
 # Remove any existing Hyperdirmic utility commands from .zshrc or .zprofile
 if [ -f "$ZSHRC" ]; then
+    echo "Removing existing Hyperdirmic utility commands..."
     sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
 fi
 
 # Add utility commands for Hyperdirmic to .zshrc or .zprofile
+echo "Adding Hyperdirmic utility commands to $ZSHRC..."
 echo "\n# Hyperdirmic utility commands" >> "$ZSHRC"
 echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m hyperdirmic.hyperdirmic'" >> "$ZSHRC"
-echo "alias killhyperdirmic='pkill -f hyperdirmic.py'" >> "$ZSHRC"
+echo "alias killhyperdirmic='pkill -f hyperdirmic.hyperdirmic'" >> "$ZSHRC"
 echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'" >> "$ZSHRC"
 echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'" >> "$ZSHRC"
 
@@ -59,6 +72,7 @@ fi
 echo "Utility commands added to $ZSHRC and sourced."
 
 # Install and configure launch agent
+echo "Creating and loading launch agent..."
 plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -84,8 +98,6 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </plist>"
 echo "$plist_data" > ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 
-echo "Launch agent plist created."
-
 # Load launch agent and check for errors
 if ! launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
     echo "Failed to load the launch agent. Please check the error log for more details at /tmp/com.drucial.hyperdirmic.err"
@@ -95,6 +107,15 @@ fi
 echo "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
-cd "$(pwd)" && ./hyperdirmic/run_hyperdirmic.sh &
+cd "$(dirname "$0")" && ./hyperdirmic/run_hyperdirmic.sh &
+
+# Verify that Hyperdirmic is running
+sleep 5
+if pgrep -f hyperdirmic.hyperdirmic; then
+    echo "Hyperdirmic is running."
+else
+    echo "Failed to start Hyperdirmic."
+    exit 1
+fi
 
 echo "Setup complete! Hyperdirmic will now run at login and automatically organize desktop and downloads files."
