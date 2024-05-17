@@ -25,6 +25,7 @@ def setup_and_teardown():
     # Create a clean clone of the repository for testing
     if os.path.exists("./test_hyperdirmic"):
         shutil.rmtree("./test_hyperdirmic")
+    os.makedirs("./test_hyperdirmic", exist_ok=True)
     subprocess.run(["git", "clone", ".", "./test_hyperdirmic"], check=True)
 
     # Ensure the scripts are copied correctly to the test_hyperdirmic directory
@@ -84,10 +85,8 @@ def setup_and_teardown():
 def test_installation(setup_and_teardown):
     log("Running installation test...")
 
-    # Get the absolute path to the install script within the test_hyperdirmic directory
-    install_script_path = os.path.abspath(
-        os.path.join(os.getcwd(), "scripts/install.sh")
-    )
+    # Get the relative path to the install script within the test_hyperdirmic directory
+    install_script_path = os.path.join("scripts", "install.sh")
 
     # Run the installation script using expect to simulate user input
     install_script = f"""
@@ -121,10 +120,8 @@ def test_installation(setup_and_teardown):
 def test_uninstallation(setup_and_teardown):
     log("Running uninstallation test...")
 
-    # Get the absolute path to the uninstall script within the test_hyperdirmic directory
-    uninstall_script_path = os.path.abspath(
-        os.path.join(os.getcwd(), "scripts/uninstall.sh")
-    )
+    # Get the relative path to the uninstall script within the test_hyperdirmic directory
+    uninstall_script_path = os.path.join("scripts", "uninstall.sh")
 
     # Run the uninstallation script using expect to simulate user input
     uninstall_script = f"""
