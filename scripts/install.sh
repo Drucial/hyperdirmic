@@ -71,6 +71,8 @@ fi
 
 echo "Utility commands added to $ZSHRC and sourced."
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # Install and configure launch agent
 echo "Creating and loading launch agent..."
 plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -81,7 +83,7 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>com.drucial.hyperdirmic</string>
     <key>ProgramArguments</key>
     <array>
-        <string>$(dirname "$0")/scripts/run.sh</string>
+        <string>$SCRIPT_DIR/run.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -107,7 +109,7 @@ fi
 echo "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
-cd "$(dirname "$0")" && ./run.sh &
+cd $SCRIPT_DIR && ./run.sh &
 
 # Verify that Hyperdirmic is running
 sleep 5

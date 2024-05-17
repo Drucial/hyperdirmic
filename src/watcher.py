@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 
 from utils.file_mappings import file_mappings
 
-from .organizer import organize_file
+from organizer import organize_file
 
 
 class Handler(FileSystemEventHandler):
