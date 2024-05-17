@@ -19,15 +19,15 @@ The script utilizes the Python Watchdog library to monitor changes in specified 
 To install Hyperdirmic, follow these steps:
 
 1. **Clone the Repository**:
-```bash
-git clone https://github.com/Drucial/hyperdirmic.git
-cd hyperdirmic
-```
+    ```bash
+    git clone https://github.com/Drucial/hyperdirmic.git
+    cd hyperdirmic
+    ```
 
 2. **Run the Install Script**:
-```bash
-./install_hyperdirmic.sh
-```
+    ```bash
+    ./scripts/install.sh
+    ```
 
 This will set up the virtual environment, install necessary dependencies, configure the launch agent, and add utility commands to your `.zshrc`.
 
@@ -36,9 +36,9 @@ This will set up the virtual environment, install necessary dependencies, config
 To uninstall Hyperdirmic, follow these steps:
 
 1. **Run the Uninstall Script**:
-```bash
-./uninstall_hyperdirmic.sh
-```
+    ```bash
+    ./scripts/uninstall.sh
+    ```
 
 This will stop any running Hyperdirmic processes, remove the launch agent, delete the virtual environment, and remove utility commands from your `.zshrc`.
 
@@ -47,21 +47,29 @@ This will stop any running Hyperdirmic processes, remove the launch agent, delet
 After installation, you can use the following utility commands:
 
 - **To kill the running `hyperdirmic` process**:
-```bash
-killhyperdirmic
-```
+    ```bash
+    killhyperdirmic
+    ```
 - **To view the standard output log**:
-```bash
-loghyperdirmic
-```
+    ```bash
+    loghyperdirmic
+    ```
 - **To view the standard error log**:
-```bash
-errorhyperdirmic
-```
+    ```bash
+    errorhyperdirmic
+    ```
+- **To view the debug log**:
+    ```bash
+    debughyperdirmic
+    ```
+- **To view all logs combined**:
+    ```bash
+    allhyperdirmiclogs
+    ```
 
 ## Troubleshooting
 
-If you encounter any issues, please check the logs using the `loghyperdirmic` and `errorhyperdirmic` commands.
+If you encounter any issues, please check the logs using the `loghyperdirmic`, `errorhyperdirmic`, `debughyperdirmic`, and `allhyperdirmiclogs` commands.
 
 ## Conclusion
 The Hyperdirmic script automates file organization tasks, making it easier to keep your desktop and downloads directory well-organized without manual intervention.

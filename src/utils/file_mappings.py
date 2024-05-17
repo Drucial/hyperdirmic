@@ -1,5 +1,3 @@
-# file_mappings.py
-
 images = {
     "jpg",
     "jpeg",
@@ -58,4 +56,3 @@ file_mappings = {
     **{ext: "Archives" for ext in archives},
     **{ext: "Code" for ext in code},
 }
-
