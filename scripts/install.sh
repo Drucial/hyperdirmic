@@ -45,6 +45,7 @@ possible_locations=(
 for location in "${possible_locations[@]}"; do
     if [ -f "$location" ]; then
         ZSHRC="$location"
+        log "Found configuration file at $ZSHRC"
         break
     fi
 done
@@ -56,7 +57,7 @@ fi
 
 # Remove any existing Hyperdirmic utility commands from .zshrc or .zprofile
 if [ -f "$ZSHRC" ]; then
-    log "Removing existing Hyperdirmic utility commands..."
+    log "Removing existing Hyperdirmic utility commands from $ZSHRC..."
     sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
 fi
 
@@ -123,6 +124,7 @@ fi
 log "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
+log "Starting the Hyperdirmic app..."
 cd "$SCRIPT_DIR" && ./run.sh &
 
 # Verify that Hyperdirmic is running
