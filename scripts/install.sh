@@ -1,18 +1,17 @@
 #!/bin/zsh
 
 log() {
-    local message="$1"
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - $message"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
 log "Starting installation script..."
 
 # Kill any existing hyperdirmic processes
 log "Terminating existing Hyperdirmic processes..."
-pkill -f hyperdirmic.main
+pkill -f "python -m src.main"
 
 # Check if any hyperdirmic processes are still running
-if pgrep -f hyperdirmic.main; then
+if pgrep -f "python -m src.main"; then
     log "Failed to terminate Hyperdirmic application."
     exit 1
 else
@@ -66,14 +65,22 @@ log "Adding Hyperdirmic utility commands to $ZSHRC..."
 {
     echo "\n# Hyperdirmic utility commands"
     echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m src.main'"
-    echo "alias killhyperdirmic='pkill -f hyperdirmic.main'"
+    echo "alias killhyperdirmic='pkill -f \"python -m src.main\"'"
     echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'"
     echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'"
+    echo "alias debughyperdirmic='cat /tmp/com.drucial.hyperdirmic.debug.log'"
+    echo "alias allhyperdirmiclogs='cat /tmp/hyperdirmic.log /tmp/com.drucial.hyperdirmic.out /tmp/com.drucial.hyperdirmic.err /tmp/com.drucial.hyperdirmic.debug.log'"
 } >> "$ZSHRC"
 
-# Source the .zshrc file to apply changes, but only if it exists
+# Source the .zshrc file to apply changes immediately
 if [ -f "$ZSHRC" ]; then
+    log "Sourcing $ZSHRC to apply changes immediately."
     source "$ZSHRC"
+    if [[ $? -eq 0 ]]; then
+        log "Successfully sourced $ZSHRC."
+    else
+        log "Failed to source $ZSHRC."
+    fi
 fi
 
 log "Utility commands added to $ZSHRC and sourced."
@@ -108,15 +115,14 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 echo "$plist_data" > ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 
 # Load launch agent and check for errors
-if launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
-    log "Launch agent loaded successfully."
-else
+if ! launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
     log "Failed to load the launch agent. Please check the error log for more details at /tmp/com.drucial.hyperdirmic.err"
     exit 1
 fi
 
+log "Launch agent loaded successfully."
+
 # Run the Hyperdirmic app
-log "Starting the Hyperdirmic app..."
 cd "$SCRIPT_DIR" && ./run.sh &
 
 # Verify that Hyperdirmic is running

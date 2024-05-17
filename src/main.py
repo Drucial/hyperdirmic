@@ -14,6 +14,7 @@ def main():
     pid_file = '/tmp/hyperdirmic.pid'
 
     def check_pid(pid):
+        """Check whether pid exists in the current process table."""
         try:
             os.kill(pid, 0)
         except OSError:
@@ -23,12 +24,14 @@ def main():
 
     if os.path.isfile(pid_file):
         with open(pid_file, 'r') as file:
-            old_pid = file.read()
-        if check_pid(int(old_pid)):
-            logging.error("Script is already running.")
-            sys.exit()
-        else:
-            os.remove(pid_file)
+            try:
+                old_pid = int(file.read().strip())
+                if check_pid(old_pid):
+                    logging.error("Script is already running.")
+                    sys.exit()
+            except (ValueError, IOError) as e:
+                logging.warning(f"Error reading pid file: {e}")
+        os.remove(pid_file)
 
     with open(pid_file, 'w') as file:
         file.write(str(os.getpid()))
