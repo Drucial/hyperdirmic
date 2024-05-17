@@ -17,15 +17,18 @@ def setup_and_teardown():
 
     # Get the absolute path to the project root
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    log(f"Project root: {project_root}")
 
     # Run the uninstall script
     uninstall_script = os.path.join(project_root, "scripts", "uninstall.sh")
-    subprocess.run([uninstall_script], check=True)
+    if os.path.exists(uninstall_script):
+        subprocess.run([uninstall_script], check=True)
+    else:
+        log(f"Uninstall script not found at {uninstall_script}")
 
     # Create a clean clone of the repository for testing
     if os.path.exists("./test_hyperdirmic"):
         shutil.rmtree("./test_hyperdirmic")
-    os.makedirs("./test_hyperdirmic", exist_ok=True)
     subprocess.run(["git", "clone", ".", "./test_hyperdirmic"], check=True)
 
     # Ensure the scripts are copied correctly to the test_hyperdirmic directory
@@ -40,12 +43,14 @@ def setup_and_teardown():
     )
 
     os.chdir("./test_hyperdirmic")
+    log(f"Current directory: {os.getcwd()}")
 
     # Create a mock .zshrc file in the test directory
     log("Creating mock .zshrc file...")
     with open(".zshrc", "w") as f:
         f.write("# Mock .zshrc for testing\n")
     os.environ["ZSHRC"] = os.path.abspath(".zshrc")
+    log(f"Mock .zshrc path: {os.getenv('ZSHRC')}")
 
     # Backup the actual .zshrc to simulate it not being found
     if os.path.exists(os.path.expanduser("~/.zshrc")):
@@ -87,6 +92,7 @@ def test_installation(setup_and_teardown):
 
     # Get the relative path to the install script within the test_hyperdirmic directory
     install_script_path = os.path.join("scripts", "install.sh")
+    log(f"Install script path: {install_script_path}")
 
     # Run the installation script using expect to simulate user input
     install_script = f"""
@@ -122,6 +128,7 @@ def test_uninstallation(setup_and_teardown):
 
     # Get the relative path to the uninstall script within the test_hyperdirmic directory
     uninstall_script_path = os.path.join("scripts", "uninstall.sh")
+    log(f"Uninstall script path: {uninstall_script_path}")
 
     # Run the uninstallation script using expect to simulate user input
     uninstall_script = f"""
