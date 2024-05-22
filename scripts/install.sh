@@ -66,7 +66,7 @@ log "Adding Hyperdirmic utility commands to $ZSHRC..."
 {
     echo "\n# Hyperdirmic utility commands"
     echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m src.main'"
-    echo "alias killhyperdirmic='pkill -f \"python -m src.main\"'"
+    echo "alias killhyperdirmic='launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist'"
     echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'"
     echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'"
     echo "alias debughyperdirmic='cat /tmp/com.drucial.hyperdirmic.debug.log'"
