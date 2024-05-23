@@ -40,6 +40,10 @@ def setup_and_teardown():
         os.path.join(project_root, "scripts", "test_uninstall.sh"),
         os.path.join(test_dir, "scripts", "test_uninstall.sh"),
     )
+    shutil.copy(
+        os.path.join(project_root, "scripts", "run.sh"),
+        os.path.join(test_dir, "scripts", "run.sh"),
+    )
 
     os.chdir(test_dir)
     log(f"Current directory: {os.getcwd()}")
