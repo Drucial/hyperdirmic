@@ -6,6 +6,19 @@ log() {
 
 log "Starting installation script..."
 
+# Determine if running in CI environment
+if [ "$CI" = "true" ]; then
+    INSTALL_DIR="/tmp/hyperdirmic_test"
+    PLIST_DIR="/tmp/Library/LaunchAgents"
+    log "Running in CI environment. Using temporary directories."
+else
+    INSTALL_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+    PLIST_DIR="$HOME/Library/LaunchAgents"
+fi
+
+log "Installation directory: $INSTALL_DIR"
+log "Plist directory: $PLIST_DIR"
+
 # Kill any existing hyperdirmic processes
 log "Terminating existing Hyperdirmic processes..."
 pkill -f "python -m src.main"
@@ -19,16 +32,16 @@ else
 fi
 
 # Check if plist file exists and unload it if it does
-if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
+if [ -f "$PLIST_DIR/com.drucial.hyperdirmic.plist" ]; then
     log "Unloading existing launch agent..."
-    launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
-    rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
+    launchctl unload "$PLIST_DIR/com.drucial.hyperdirmic.plist"
+    rm -f "$PLIST_DIR/com.drucial.hyperdirmic.plist"
 fi
 
 # Create a virtual environment and install required Python modules
 log "Creating virtual environment..."
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv "$INSTALL_DIR/venv"
+source "$INSTALL_DIR/venv/bin/activate"
 pip install --upgrade pip
 pip install watchdog pytest
 
@@ -65,8 +78,8 @@ fi
 log "Adding Hyperdirmic utility commands to $ZSHRC..."
 {
     echo "\n# Hyperdirmic utility commands"
-    echo "alias organize='source $(dirname "$0")/venv/bin/activate && PYTHONPATH=$(dirname "$0") python -m src.main'"
-    echo "alias killhyperdirmic='launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist'"
+    echo "alias organize='source $INSTALL_DIR/venv/bin/activate && PYTHONPATH=$INSTALL_DIR python -m src.main'"
+    echo "alias killhyperdirmic='launchctl unload $PLIST_DIR/com.drucial.hyperdirmic.plist'"
     echo "alias loghyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'"
     echo "alias errorhyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'"
     echo "alias debughyperdirmic='cat /tmp/com.drucial.hyperdirmic.debug.log'"
@@ -86,10 +99,9 @@ fi
 
 log "Utility commands added to $ZSHRC and sourced."
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
 # Install and configure launch agent
 log "Creating and loading launch agent..."
+mkdir -p "$PLIST_DIR"
 plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -98,7 +110,7 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>com.drucial.hyperdirmic</string>
     <key>ProgramArguments</key>
     <array>
-        <string>$SCRIPT_DIR/run.sh</string>
+        <string>$INSTALL_DIR/run.sh</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
@@ -113,10 +125,10 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>/tmp/com.drucial.hyperdirmic.out</string>
 </dict>
 </plist>"
-echo "$plist_data" > ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
+echo "$plist_data" > "$PLIST_DIR/com.drucial.hyperdirmic.plist"
 
 # Load launch agent and check for errors
-if ! launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
+if ! launchctl load "$PLIST_DIR/com.drucial.hyperdirmic.plist"; then
     log "Failed to load the launch agent. Please check the error log for more details at /tmp/com.drucial.hyperdirmic.err"
     exit 1
 fi
@@ -125,7 +137,7 @@ log "Launch agent loaded successfully."
 
 # Run the Hyperdirmic app
 log "Starting the Hyperdirmic app..."
-cd "$SCRIPT_DIR" && ./run.sh &
+cd "$INSTALL_DIR" && ./scripts/run.sh &
 
 # Verify that Hyperdirmic is running
 sleep 5

@@ -47,4 +47,5 @@ fi
 log "Executing: python -m src.main"
 exec -a Hyperdirmic python -m src.main >> /tmp/com.drucial.hyperdirmic.log 2>&1 || {
     log "Failed to start Hyperdirmic: $?"
+    exit 1
 }

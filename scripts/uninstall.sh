@@ -6,20 +6,29 @@ log() {
 
 log "Starting uninstallation script..."
 
+# Determine if running in CI environment
+if [ "$CI" = "true" ]; then
+    PLIST_DIR="/tmp/Library/LaunchAgents"
+    VENV_DIR="/tmp/hyperdirmic_test/venv"
+    log "Running in CI environment. Using temporary directories."
+else
+    PLIST_DIR="$HOME/Library/LaunchAgents"
+    VENV_DIR="$(cd "$(dirname "$0")/.." && pwd)/venv"
+fi
+
 # Kill any existing Hyperdirmic processes
 pkill -f src.main
 
 # Check if plist file exists and unload it if it does
-if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
-    launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
-    rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
+if [ -f $PLIST_DIR/com.drucial.hyperdirmic.plist ]; then
+    launchctl unload $PLIST_DIR/com.drucial.hyperdirmic.plist
+    rm -f $PLIST_DIR/com.drucial.hyperdirmic.plist
     log "Launch agent unloaded and plist file removed."
 else
     log "No plist file found to unload."
 fi
 
 # Remove virtual environment
-VENV_DIR="$(cd "$(dirname "$0")/.." && pwd)/venv"
 if [ -d "$VENV_DIR" ]; then
     rm -rf "$VENV_DIR"
     log "Virtual environment removed."
@@ -49,7 +58,7 @@ fi
 
 # Remove utility commands if present
 if [ -f "$ZSHRC" ]; then
-    sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
+    sed -i '' '/# Hyperdirmic utility commands/,+6d' "$ZSHRC"
     log "Utility commands removed from $ZSHRC."
 fi
 
