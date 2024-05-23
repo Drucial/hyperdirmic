@@ -1,0 +1,7 @@
+# Core project dependencies
+watchdog
+
+# Testing dependencies
+pytest
+pytest-order
+expect

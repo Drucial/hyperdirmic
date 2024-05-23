@@ -134,10 +134,27 @@ if ! launchctl load "$PLIST_DIR/com.drucial.hyperdirmic.plist"; then
 fi
 
 log "Launch agent loaded successfully."
-
+# Ensure run.sh exists and has executable permissions
+RUN_SCRIPT="$INSTALL_DIR/scripts/run.sh"  # Correct path to run.sh
+log "Checking if run.sh exists at $RUN_SCRIPT"
+if [ ! -f "$RUN_SCRIPT" ]; then
+    log "run.sh not found at $RUN_SCRIPT"
+    exit 1
+else
+    log "run.sh found at $RUN_SCRIPT"
+    chmod +x "$RUN_SCRIPT"
+fi
 # Run the Hyperdirmic app
 log "Starting the Hyperdirmic app..."
-cd "$INSTALL_DIR" && ./scripts/run.sh &
+log "Executing: $RUN_SCRIPT"
+cd "$INSTALL_DIR"
+if [ -f "$RUN_SCRIPT" ]; then
+    log "Confirmed run.sh exists. Executing."
+    ./scripts/run.sh &
+else
+    log "run.sh not found at execution time."
+    exit 1
+fi
 
 # Verify that Hyperdirmic is running
 sleep 5
