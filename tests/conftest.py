@@ -1,9 +1,8 @@
 import os
 import shutil
 import subprocess
-import time
-
 import pytest
+import time
 
 def log(message):
     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}")
@@ -17,33 +16,35 @@ def setup_and_teardown():
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     log(f"Project root: {project_root}")
 
-    # Run the test uninstall script to ensure a clean state
-    test_uninstall_script = os.path.join(project_root, "scripts", "test_uninstall.sh")
-    if os.path.exists(test_uninstall_script):
-        subprocess.run([test_uninstall_script], check=True)
+    # Run the uninstall script
+    uninstall_script = os.path.join(project_root, "scripts", "uninstall.sh")
+    if os.path.exists(uninstall_script):
+        subprocess.run([uninstall_script], check=True)
     else:
-        log(f"Test uninstall script not found at {test_uninstall_script}")
+        log(f"Uninstall script not found at {uninstall_script}")
 
-    # Create a clean clone of the repository for testing
+    # Create a clean test directory for testing
     test_dir = "./test_hyperdirmic"
     if os.path.exists(test_dir):
         shutil.rmtree(test_dir)
-    subprocess.run(["git", "clone", ".", test_dir], check=True)
+    os.makedirs(test_dir)
 
-    # Ensure the scripts are copied correctly to the test_hyperdirmic directory
-    os.makedirs(os.path.join(test_dir, "scripts"), exist_ok=True)
-    shutil.copy(
-        os.path.join(project_root, "scripts", "test_install.sh"),
-        os.path.join(test_dir, "scripts", "test_install.sh"),
-    )
-    shutil.copy(
-        os.path.join(project_root, "scripts", "test_uninstall.sh"),
-        os.path.join(test_dir, "scripts", "test_uninstall.sh"),
-    )
-    shutil.copy(
-        os.path.join(project_root, "scripts", "run.sh"),
-        os.path.join(test_dir, "scripts", "run.sh"),
-    )
+    # Copy necessary files to the test directory
+    files_to_copy = [
+        "scripts/install.sh",
+        "scripts/uninstall.sh",
+        "scripts/run.sh",
+        "scripts/test_install.sh",
+        "scripts/test_uninstall.sh"
+    ]
+    for file in files_to_copy:
+        dest_file = os.path.join(test_dir, file)
+        os.makedirs(os.path.dirname(dest_file), exist_ok=True)
+        shutil.copy(file, dest_file)
+        log(f"Copied {file} to {dest_file}")
+
+    # Copy the src directory
+    shutil.copytree(os.path.join(project_root, "src"), os.path.join(test_dir, "src"))
 
     os.chdir(test_dir)
     log(f"Current directory: {os.getcwd()}")

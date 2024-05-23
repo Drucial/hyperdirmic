@@ -10,12 +10,18 @@ def log(message):
 def test_uninstallation(setup_and_teardown):
     log("Running uninstallation test...")
 
-    # Get the relative path to the test uninstall script within the test_hyperdirmic directory
+    # Get the relative path to the uninstall script within the test_hyperdirmic directory
     uninstall_script_path = os.path.join("scripts", "test_uninstall.sh")
     log(f"Uninstall script path: {uninstall_script_path}")
 
-    # Run the test uninstallation script
-    subprocess.run([uninstall_script_path], check=True)
+    # Run the uninstallation script and capture output
+    result = subprocess.run([uninstall_script_path], capture_output=True, text=True)
+    log(result.stdout)
+    log(result.stderr)
+
+    if result.returncode != 0:
+        log(f"Uninstallation script failed with return code {result.returncode}")
+        raise subprocess.CalledProcessError(result.returncode, uninstall_script_path)
 
     # Verify virtual environment is removed
     assert not os.path.exists("venv"), "Failed to remove virtual environment."

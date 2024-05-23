@@ -14,8 +14,14 @@ def test_installation(setup_and_teardown):
     install_script_path = os.path.join("scripts", "test_install.sh")
     log(f"Install script path: {install_script_path}")
 
-    # Run the test installation script
-    subprocess.run([install_script_path], check=True)
+    # Run the test installation script and capture output
+    result = subprocess.run([install_script_path], capture_output=True, text=True)
+    log(result.stdout)
+    log(result.stderr)
+
+    if result.returncode != 0:
+        log(f"Installation script failed with return code {result.returncode}")
+        raise subprocess.CalledProcessError(result.returncode, install_script_path)
 
     # Verify virtual environment is created
     assert os.path.exists("venv"), "Failed to create virtual environment."
