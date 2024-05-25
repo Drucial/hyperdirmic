@@ -38,9 +38,10 @@ def setup_and_teardown():
         "scripts/test_uninstall.sh"
     ]
     for file in files_to_copy:
+        src_file = os.path.join(project_root, file)
         dest_file = os.path.join(test_dir, file)
         os.makedirs(os.path.dirname(dest_file), exist_ok=True)
-        shutil.copy(file, dest_file)
+        shutil.copy(src_file, dest_file)
         log(f"Copied {file} to {dest_file}")
 
     # Copy the src directory
