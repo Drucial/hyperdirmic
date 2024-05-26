@@ -1,2 +1,0 @@
-[console_scripts]
-hyperdirmic = src.main:main
