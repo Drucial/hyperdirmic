@@ -11,7 +11,6 @@ from watchdog.observers import Observer
 from utils.logger import setup_logging
 from watcher import Handler
 
-
 def main():
     setproctitle.setproctitle("hyperdirmic")
 
@@ -65,7 +64,6 @@ def main():
     if os.path.exists(pid_file):
         os.remove(pid_file)
         logging.info("PID file removed.")
-
 
 if __name__ == "__main__":
     try:
