@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import time
+from set_folder_icon import set_folder_icon
 
 def organize_file(file_path, file_type, file_mappings):
     destination_dir = get_destination_dir(file_type, file_mappings)
@@ -21,6 +22,10 @@ def organize_file(file_path, file_type, file_mappings):
             if not os.path.exists(destination_dir):
                 os.makedirs(destination_dir)
                 logging.info(f"Created directory {destination_dir}")
+
+                # Set custom folder icon
+                icon_path = '/assets/images/folder_icon.icns'
+                set_folder_icon(destination_dir, icon_path)
 
             new_filename = filename
             counter = 1
