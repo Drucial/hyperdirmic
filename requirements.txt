@@ -1,0 +1,13 @@
+# Core project dependencies
+watchdog
+setproctitle
+
+# Testing dependencies
+pytest
+pytest-order
+pexpect
+
+# Linting and formatting
+black
+flake8
+

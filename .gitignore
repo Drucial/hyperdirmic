@@ -13,3 +13,9 @@ __pycache__/
 
 # Ignore test logs and temporary files
 /tmp/
+
+# Ignore the build directory
+build/
+
+# Ignore the hyperdirmic.egg-info directory
+hyperdirmic.egg-info/
