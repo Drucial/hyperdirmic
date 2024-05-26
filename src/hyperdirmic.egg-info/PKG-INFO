@@ -1,3 +1,26 @@
+Metadata-Version: 2.1
+Name: hyperdirmic
+Version: 0.1.0
+Summary: An OSX app that watches directories and auto-organizes files.
+Home-page: https://github.com/drucial/hyperdirmic
+Author: Drew White
+Author-email: drew@drew-white.dev
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: watchdog
+Requires-Dist: setproctitle
+Requires-Dist: pytest
+Requires-Dist: pytest-order
+Requires-Dist: pexpect
+Requires-Dist: black
+Requires-Dist: flake8
+
 # Hyperdirmic Script
 
 ## Overview
@@ -86,107 +109,36 @@ If you encounter any issues, please check the logs using the `loghyperdirmic`, `
 
 2. **Activate the virtual environment:**
 
-   ```bash
-   source venv/bin/activate
-   ```
+   - On macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+    - On Windows:
+
+```bash
+venv\Scripts\activate
+```
 
 3. **Install dependencies:**
 
    ```bash
-   pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
 4. **Running Tests:**
 
    ```bash
-   ./scripts/test.sh
+   pytest
    ```
 
 5. **Linting and Formatting:**
 
    ```bash
-   ./scripts/lint.sh
-   ./scripts/format.sh
+   flake8
+   black .
    ```
-
-### 5. Configure Git Hooks (Optional)
-
-You can set up Git hooks to automatically run linting and tests before committing. Here’s an example using pre-commit:
-
-1. **Install pre-commit**:
-
-   ```bash
-   pip install pre-commit
-   ```
-
-2. **Create a `.pre-commit-config.yaml` file**:
-
-   ```yaml
-   repos:
-     - repo: https://github.com/pre-commit/mirrors-prettier
-       rev: v2.3.0
-       hooks:
-         - id: prettier
-     - repo: https://github.com/pre-commit/flake8
-       rev: v3.9.2
-       hooks:
-         - id: flake8
-     - repo: https://github.com/psf/black
-       rev: 21.7b0
-       hooks:
-         - id: black
-   ```
-
-3. **Install the pre-commit hooks**:
-   ```bash
-   pre-commit install
-   ```
-
-### 6. Continuous Integration (CI)
-
-Set up a CI pipeline to automate tests and linting. Here’s an example using GitHub Actions:
-
-- **.github/workflows/ci.yml**:
-
-  ```yaml
-  name: CI
-
-  on: [push, pull_request]
-
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-
-      steps:
-        - uses: actions/checkout@v2
-        - name: Set up Python
-          uses: actions/setup-python@v2
-          with:
-            python-version: "3.x"
-        - name: Install dependencies
-          run: |
-            python -m venv venv
-            source venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-        - name: Run tests
-          run: |
-            source venv/bin/activate
-            pytest
-        - name: Lint code
-          run: |
-            source venv/bin/activate
-            flake8 .
-        - name: Format code
-          run: |
-            source venv/bin/activate
-            black --check .
-  ```
-
-### Summary
-
-By following these steps, you ensure a consistent and automated development environment setup. Your project structure should look like this:
 
 ## Conclusion
 

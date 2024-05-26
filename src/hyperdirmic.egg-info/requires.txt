@@ -1,0 +1,7 @@
+watchdog
+setproctitle
+pytest
+pytest-order
+pexpect
+black
+flake8

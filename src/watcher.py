@@ -6,6 +6,7 @@ from watchdog.events import FileSystemEventHandler
 from organizer import organize_file
 from utils.file_mappings import file_mappings
 
+
 class Handler(FileSystemEventHandler):
     def __init__(self):
         super().__init__()
