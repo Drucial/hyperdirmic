@@ -68,5 +68,8 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.info("Executing main.py")
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.error(f"Unhandled exception: {e}")
+        raise
