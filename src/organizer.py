@@ -6,6 +6,7 @@ import shutil
 import time
 from set_folder_icon import set_folder_icon
 
+
 def organize_file(file_path, file_type, file_mappings):
     destination_dir = get_destination_dir(file_type, file_mappings)
     filename = os.path.basename(file_path).lstrip(".")
@@ -41,8 +42,11 @@ def organize_file(file_path, file_type, file_mappings):
     except Exception as e:
         logging.error(f"Failed to move file {src} to {destination_dir}: {e}")
 
+
 def get_destination_dir(file_type, file_mappings):
     downloads_dir = os.path.expanduser("~/Downloads")
-    destination_dir = os.path.join(downloads_dir, file_mappings.get(file_type, "OtherFiles"))
+    destination_dir = os.path.join(
+        downloads_dir, file_mappings.get(file_type, "OtherFiles")
+    )
     logging.info(f"Destination directory for {file_type} is {destination_dir}")
     return destination_dir

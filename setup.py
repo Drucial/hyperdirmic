@@ -1,12 +1,15 @@
 from setuptools import find_packages, setup
 
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(
     name="hyperdirmic",
     version="0.1.0",
     author="Drew White",
     author_email="drew@drew-white.dev",
     description="An OSX app that watches directories and auto-organizes files.",
-    long_description=open("README.md").read(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/drucial/hyperdirmic",
     packages=find_packages(where="src"),
@@ -14,6 +17,12 @@ setup(
     include_package_data=True,
     install_requires=[
         "watchdog",
+        "setproctitle",
+        "pytest",
+        "pytest-order",
+        "pexpect",
+        "black",
+        "flake8",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

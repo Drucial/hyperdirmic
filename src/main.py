@@ -4,14 +4,19 @@ import logging
 import os
 import sys
 import time
+
+import setproctitle
 from watchdog.observers import Observer
-from watcher import Handler
+
 from utils.logger import setup_logging
+from watcher import Handler
 
 def main():
+    setproctitle.setproctitle("hyperdirmic")
+
     setup_logging()
     logging.info("Hyperdirmic main function started")
-    pid_file = '/tmp/hyperdirmic.pid'
+    pid_file = "/tmp/hyperdirmic.pid"
 
     def check_pid(pid):
         """Check whether pid exists in the current process table."""
@@ -23,7 +28,7 @@ def main():
             return True
 
     if os.path.isfile(pid_file):
-        with open(pid_file, 'r') as file:
+        with open(pid_file, "r") as file:
             try:
                 old_pid = int(file.read().strip())
                 if check_pid(old_pid):
@@ -33,11 +38,14 @@ def main():
                 logging.warning(f"Error reading pid file: {e}")
         os.remove(pid_file)
 
-    with open(pid_file, 'w') as file:
+    with open(pid_file, "w") as file:
         file.write(str(os.getpid()))
 
     logging.info("Starting observer...")
-    paths_to_watch = [os.path.expanduser("~/Desktop"), os.path.expanduser("~/Downloads")]
+    paths_to_watch = [
+        os.path.expanduser("~/Desktop"),
+        os.path.expanduser("~/Downloads"),
+    ]
     event_handler = Handler()
     observer = Observer()
     for path in paths_to_watch:
@@ -58,5 +66,8 @@ def main():
         logging.info("PID file removed.")
 
 if __name__ == "__main__":
-    logging.info("Executing main.py")
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.error(f"Unhandled exception: {e}")
+        raise
