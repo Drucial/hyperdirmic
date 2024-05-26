@@ -6,35 +6,30 @@ log() {
 
 log "Starting installation script..."
 
-# Kill any existing hyperdirmic processes
 log "Terminating existing Hyperdirmic processes..."
-pkill -f "python -m src.main"
+pkill -f "hyperdirmic"
 
-# Check if any hyperdirmic processes are still running
-if pgrep -f "python -m src.main"; then
+if pgrep -f "hyperdirmic"; then
     log "Failed to terminate Hyperdirmic application."
     exit 1
 else
     log "Successfully terminated Hyperdirmic processes."
 fi
 
-# Check if plist file exists and unload it if it does
 if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
     log "Unloading existing launch agent..."
     launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
     rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 fi
 
-# Create a virtual environment and install required Python modules
 log "Creating virtual environment..."
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
-pip install watchdog
+pip install -r requirements.txt
 
 log "Virtual environment and dependencies installed."
 
-# Determine the location of .zshrc or .zprofile
 ZSHRC=
 possible_locations=(
     ~/.zshrc
@@ -55,13 +50,11 @@ if [ -z "$ZSHRC" ]; then
     read -r ZSHRC
 fi
 
-# Remove any existing Hyperdirmic utility commands from .zshrc or .zprofile
 if [ -f "$ZSHRC" ]; then
     log "Removing existing Hyperdirmic utility commands from $ZSHRC..."
-    sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
+    sed -i '' '/# Hyperdirmic utility commands/,+6d' "$ZSHRC"
 fi
 
-# Add utility commands for Hyperdirmic to .zshrc or .zprofile
 log "Adding Hyperdirmic utility commands to $ZSHRC..."
 {
     echo "\n# Hyperdirmic utility commands"
@@ -73,7 +66,6 @@ log "Adding Hyperdirmic utility commands to $ZSHRC..."
     echo "alias allhyperdirmiclogs='cat /tmp/hyperdirmic.log /tmp/com.drucial.hyperdirmic.out /tmp/com.drucial.hyperdirmic.err /tmp/com.drucial.hyperdirmic.debug.log'"
 } >> "$ZSHRC"
 
-# Source the .zshrc file to apply changes immediately
 if [ -f "$ZSHRC" ]; then
     log "Sourcing $ZSHRC to apply changes immediately."
     source "$ZSHRC"
@@ -88,7 +80,6 @@ log "Utility commands added to $ZSHRC and sourced."
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-# Install and configure launch agent
 log "Creating and loading launch agent..."
 plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
@@ -115,7 +106,6 @@ plist_data="<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </plist>"
 echo "$plist_data" > ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
 
-# Load launch agent and check for errors
 if ! launchctl load ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist; then
     log "Failed to load the launch agent. Please check the error log for more details at /tmp/com.drucial.hyperdirmic.err"
     exit 1
@@ -123,13 +113,11 @@ fi
 
 log "Launch agent loaded successfully."
 
-# Run the Hyperdirmic app
 log "Starting the Hyperdirmic app..."
 cd "$SCRIPT_DIR" && ./run.sh &
 
-# Verify that Hyperdirmic is running
 sleep 5
-if pgrep -f src.main; then
+if pgrep -f hyperdirmic; then
     log "Hyperdirmic is running."
 else
     log "Failed to start Hyperdirmic."

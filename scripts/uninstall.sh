@@ -6,11 +6,18 @@ log() {
 
 log "Starting uninstallation script..."
 
-# Kill any existing Hyperdirmic processes
-pkill -f src.main
+log "Terminating existing Hyperdirmic processes..."
+pkill -f hyperdirmic
 
-# Check if plist file exists and unload it if it does
+if pgrep -f hyperdirmic; then
+    log "Failed to terminate Hyperdirmic application."
+    exit 1
+else
+    log "Successfully terminated Hyperdirmic processes."
+fi
+
 if [ -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist ]; then
+    log "Unloading existing launch agent..."
     launchctl unload ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
     rm -f ~/Library/LaunchAgents/com.drucial.hyperdirmic.plist
     log "Launch agent unloaded and plist file removed."
@@ -18,16 +25,15 @@ else
     log "No plist file found to unload."
 fi
 
-# Remove virtual environment
 VENV_DIR="$(cd "$(dirname "$0")/.." && pwd)/venv"
 if [ -d "$VENV_DIR" ]; then
+    log "Removing virtual environment..."
     rm -rf "$VENV_DIR"
     log "Virtual environment removed."
 else
     log "No virtual environment found to remove."
 fi
 
-# Determine the location of .zshrc or .zprofile
 ZSHRC=
 possible_locations=(
     ~/.zshrc
@@ -47,20 +53,20 @@ if [ -z "$ZSHRC" ]; then
     read -r ZSHRC
 fi
 
-# Remove utility commands if present
 if [ -f "$ZSHRC" ]; then
-    sed -i '' '/# Hyperdirmic utility commands/,+5d' "$ZSHRC"
+    log "Removing utility commands from $ZSHRC..."
+    sed -i '' '/# Hyperdirmic utility commands/,+6d' "$ZSHRC"
     log "Utility commands removed from $ZSHRC."
 fi
 
-# Clear the logs
+log "Clearing Hyperdirmic logs..."
 rm -f /tmp/hyperdirmic.log
 rm -f /tmp/com.drucial.hyperdirmic.err
 rm -f /tmp/com.drucial.hyperdirmic.out
 rm -f /tmp/com.drucial.hyperdirmic.debug.log
 log "Logs cleared."
 
-# Remove __pycache__ directories
+log "Removing __pycache__ directories..."
 find . -name "__pycache__" -type d -exec rm -r {} +
 log "__pycache__ directories removed."
 
