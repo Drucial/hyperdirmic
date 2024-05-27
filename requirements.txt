@@ -1,6 +1,7 @@
 # Core project dependencies
 watchdog
 setproctitle
+pyobjc
 
 # Testing dependencies
 pytest
