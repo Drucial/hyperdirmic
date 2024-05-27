@@ -25,7 +25,8 @@ def organize_file(file_path, file_type, file_mappings):
                 logging.info(f"Created directory {destination_dir}")
 
                 # Set custom folder icon
-                icon_path = '/Users/drucial/Dev/hyperdirmic/assets/images/folder_dark.icns'
+                script_dir = os.path.dirname(__file__)
+                icon_path = os.path.join(script_dir, '../assets/images/folder_dark.icns')
                 set_folder_icon(destination_dir, icon_path)
 
             new_filename = filename

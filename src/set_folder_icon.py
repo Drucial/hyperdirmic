@@ -18,12 +18,3 @@ def set_folder_icon(directory_path, icon_path):
             logging.info(f"Icon set for directory '{directory_path}' with icon '{icon_path}'.")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    
-    # Ensure to provide the absolute paths to the directory and icon file
-    directory_path = os.path.abspath('/Users/drucial/Downloads/Documents')
-    icon_path = os.path.abspath('/Users/drucial/Dev/hyperdirmic/assets/images/folder_icon.icns')
-    
-    set_folder_icon(directory_path, icon_path)
