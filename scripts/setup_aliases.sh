@@ -1,7 +1,10 @@
 #!/bin/zsh
 
-# Aliases for Hyperdirmic development scripts
+# Production Aliases
 alias organize='source ./scripts/venv/bin/activate && PYTHONPATH=./scripts python -m src.main'
+alias xd='find ~/Downloads -mindepth 1 -exec osascript -e "tell application \"Finder\" to move (POSIX file \"{}\" as alias) to trash" \;'
+
+# Dev Aliases
 alias kill_hyperdirmic='pkill -f "hyperdirmic"'
 alias log_hyperdirmic='cat /tmp/com.drucial.hyperdirmic.out'
 alias error_hyperdirmic='cat /tmp/com.drucial.hyperdirmic.err'
