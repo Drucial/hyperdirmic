@@ -1,5 +1,3 @@
-# src/organize.py
-
 import logging
 import os
 import shutil
@@ -46,8 +44,8 @@ def organize_file(file_path, file_type, file_mappings):
 
 def get_destination_dir(file_type, file_mappings):
     downloads_dir = os.path.expanduser("~/Downloads")
-    destination_dir = os.path.join(
-        downloads_dir, file_mappings.get(file_type, "OtherFiles")
-    )
+    if file_type not in file_mappings:
+        logging.info(f"File type {file_type} not found in mappings. Using 'Misc'.")
+    destination_dir = os.path.join(downloads_dir, file_mappings.get(file_type, "Misc"))
     logging.info(f"Destination directory for {file_type} is {destination_dir}")
     return destination_dir

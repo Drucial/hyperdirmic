@@ -25,6 +25,11 @@ apps = {
     "bat",
     "msi",
     "sh",
+    "dmg",
+    "deb",
+    "rpm",
+    "apk",
+    "pkg",
 }
 
 archives = {
